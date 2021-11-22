@@ -48,7 +48,7 @@ public class Slide_Image : MonoBehaviour
             if (!ButtonsAni)
                 for(int i = 0; i < Buttons.Length; i++)
                 {
-                    Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * (0.8f + (i * 0.2f))) + 
+                    Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * (1.0f + (i * 0.2f))) + 
                         (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
                 }
 
@@ -76,6 +76,8 @@ public class Slide_Image : MonoBehaviour
                     }
                 }
             }
+
+            
         }
         else
         {
@@ -96,5 +98,7 @@ public class Slide_Image : MonoBehaviour
     {
         PivotIndex = !PivotIndex;
         PivotPoint = Pivots[PivotIndex ? 1 : 0].x;
+
+        UIManager.GetInstance.OpenSlide = PivotIndex;
     }
 }
