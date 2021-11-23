@@ -22,26 +22,30 @@ public class Change_UI : MonoBehaviour
 
     public void ClickButton()
     {
-        isOpen = true;
+        if(!isOpen)
+        {
+            isOpen = true;
 
-        Window.SetActive(isOpen);
-        WindowAni.SetBool("Open", isOpen);
+            Window.SetActive(isOpen);
+            WindowAni.SetBool("Open", isOpen);
 
-        UIManager.GetInstance.CtlrOtherWindows();
+            UIManager.GetInstance.CtlrOtherWindows();
+        }
     }
 
     public void ExitButton()
+    {   
+        if(isOpen)
+        {
+            isOpen = false;
+
+            WindowAni.SetBool("Open", isOpen);
+        }
+    }
+
+    void ExitWindow()
     {
         UIManager.GetInstance.CtlrOtherWindows();
-        
-        isOpen = false;
-
-        WindowAni.SetBool("Open", isOpen);
-        
-        if(Window.GetComponent<RectTransform>().localScale.x == 0
-            && Window.GetComponent<RectTransform>().localScale.y == 0)
-        {
-            Window.SetActive(isOpen);
-        }
+        Window.SetActive(isOpen);
     }
 }

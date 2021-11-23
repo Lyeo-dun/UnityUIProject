@@ -28,7 +28,7 @@ public class Slide_Image : MonoBehaviour
     }
     private void Start()
     {
-        Speed = 0.8f;
+        Speed = 1.8f;
 
         Pivots[0] = new Vector2(1.0f, 0.5f);
         Pivots[1] = new Vector2(0.0f, 0.5f);
@@ -48,7 +48,7 @@ public class Slide_Image : MonoBehaviour
             if (!ButtonsAni)
                 for(int i = 0; i < Buttons.Length; i++)
                 {
-                    Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * (1.0f + (i * 0.2f))) + 
+                    Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * (0.6f + (i * 0.2f))) + 
                         (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
                 }
 
@@ -67,7 +67,7 @@ public class Slide_Image : MonoBehaviour
             {
                 for (int i = 0; i < Buttons.Length; i++)
                 {
-                    Buttons[i].GetComponent<RectTransform>().pivot += (Vector2.left * 1.8f * Time.deltaTime);
+                    Buttons[i].GetComponent<RectTransform>().pivot += (Vector2.left * Speed * Time.deltaTime);
                      
                     if (0.5f >= Buttons[i].GetComponent<RectTransform>().pivot.x)
                     {

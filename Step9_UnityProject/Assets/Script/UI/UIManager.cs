@@ -14,7 +14,6 @@ public class UIManager : MonoBehaviour
     }
 
     private GameObject SlidingPopup;
-
     private bool isOpenSlideWindow;
     public bool OpenSlide
     {
@@ -25,6 +24,20 @@ public class UIManager : MonoBehaviour
         get
         {
             return isOpenSlideWindow;
+        }
+    }
+
+    private GameObject ScrollViewUI;
+    private bool isScrollViewUI;
+    public bool OpenScroll
+    {
+        set
+        {
+            isScrollViewUI = value;
+        }
+        get
+        {
+            return isScrollViewUI;
         }
     }
 
@@ -41,20 +54,29 @@ public class UIManager : MonoBehaviour
         }
 
         SlidingPopup = GameObject.Find("Sliding Popup").transform.GetChild(0).gameObject;
+        ScrollViewUI = GameObject.Find("ScrollUI");
     }
     void Start()
     {
-        isOpenSlideWindow = false;
+        OpenSlide = false;
+        OpenScroll = false;
     }
 
     public void CtlrOtherWindows()
     {
-        if(isOpenSlideWindow)
+        if(OpenSlide)
         {
             SlidingPopup.GetComponent<Slide_Image>().PopUpDraw();
-            isOpenSlideWindow = true;
+            OpenSlide = true;
+        }
+
+        if(OpenScroll)
+        {
+            ScrollViewUI.GetComponent<ScrollUICtrl>().ClickButton();
+            OpenScroll = true;
         }
     }
+
     void Update()
     {
     }
