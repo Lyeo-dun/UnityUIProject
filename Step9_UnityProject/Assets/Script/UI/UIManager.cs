@@ -76,8 +76,4 @@ public class UIManager : MonoBehaviour
             OpenScroll = true;
         }
     }
-
-    void Update()
-    {
-    }
 }
