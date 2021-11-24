@@ -29,7 +29,7 @@ public class ScrollUICtrl : MonoBehaviour
             ScrollViewContents[i] = ScrollView.transform.GetChild(1).transform.GetChild(0).transform.
                 GetChild(i).GetComponent<RectTransform>();
 
-            ScrollViewContents[i].anchoredPosition = new Vector2(-120.0f, 0.0f);
+            ScrollViewContents[i].anchoredPosition = new Vector2(-120.0f, (-30.0f * i));
         }
 
         ScrollViewUIRect.anchoredPosition = new Vector2(0.0f, 0.0f);
@@ -87,11 +87,9 @@ public class ScrollUICtrl : MonoBehaviour
 
                 if(ScrollViewUIRect.anchoredPosition.y >= 0)
                 {
-                    ScrollViewUIRect.anchoredPosition = Vector2.zero;
-
                     for (int i = 0; i < ScrollViewContents.Length; i++)
                     {
-                        ScrollViewContents[i].anchoredPosition = Vector2.left * 120;
+                        ScrollViewContents[i].anchoredPosition = Vector2.left * 120 + (Vector2.down * (30.0f * i));
                     }
                 }
             }
