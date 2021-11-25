@@ -14,6 +14,7 @@ public class Slide_Image : MonoBehaviour
 
     [SerializeField] private GameObject[] Buttons;
     private bool ButtonsAni;
+    private float SinValue;
 
     private void Awake()
     {
@@ -28,7 +29,7 @@ public class Slide_Image : MonoBehaviour
     }
     private void Start()
     {
-        Speed = 1.8f;
+        Speed = 5.4f;
 
         Pivots[0] = new Vector2(1.0f, 0.5f);
         Pivots[1] = new Vector2(0.0f, 0.5f);
@@ -39,19 +40,18 @@ public class Slide_Image : MonoBehaviour
         PivotPoint = Pivots[PivotIndex ? 1 : 0].x;
 
         ButtonsAni = false;
+
+        for (int i = 0; i < Buttons.Length; i++)
+        {
+            Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * (1.8f + (i * 1.2f))) +
+                (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
+        }
     }
 
     private void FixedUpdate()
     {
         if(PivotIndex)
         {
-            if (!ButtonsAni)
-                for(int i = 0; i < Buttons.Length; i++)
-                {
-                    Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * (0.6f + (i * 0.2f))) + 
-                        (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
-                }
-
             if (PivotPoint < Rect.pivot.x) // 목표가 0이고 피벗이 1일때
             {
                 Rect.pivot += Vector2.left * Speed * Time.deltaTime;
@@ -60,28 +60,33 @@ public class Slide_Image : MonoBehaviour
                 {
                     Rect.pivot = (Vector2.left * PivotPoint) + (Vector2.up * Rect.pivot.y);
                     ButtonsAni = true;
+                    SinValue = 0;
                 }
             }
-
-            if(ButtonsAni)
+            
+            if (ButtonsAni)
             {
                 for (int i = 0; i < Buttons.Length; i++)
                 {
-                    Buttons[i].GetComponent<RectTransform>().pivot += (Vector2.left * Speed * Time.deltaTime);
-                     
+                    //Buttons[i].GetComponent<RectTransform>().pivot += Vector2.left * Speed * 3.0f * Time.deltaTime;
+                    Buttons[i].GetComponent<RectTransform>().pivot = Vector2.Lerp(Buttons[i].GetComponent<RectTransform>().pivot, (Vector2.right * 0.5f) +
+                            (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y), 0.2f * Mathf.PI * Mathf.Sin(SinValue));
+
                     if (0.5f >= Buttons[i].GetComponent<RectTransform>().pivot.x)
                     {
                         Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * 0.5f) +
-                        (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
+                            (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
+
+                        if (i == Buttons.Length - 1)
+                        {
+                            ButtonsAni = false;
+                        }
                     }
                 }
             }
-
-            
         }
         else
         {
-            ButtonsAni = false;
             if (PivotPoint > Rect.pivot.x) // 목표가 1이고 피벗이 0일때
             {
                 Rect.pivot += Vector2.right * Speed * Time.deltaTime;
@@ -89,10 +94,18 @@ public class Slide_Image : MonoBehaviour
                 if (PivotPoint <= Rect.pivot.x)
                 {
                     Rect.pivot = (Vector2.right * PivotPoint) + (Vector2.up * Rect.pivot.y);
+
+                    for (int i = 0; i < Buttons.Length; i++)
+                    {
+                        Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * (1.8f + (i * 1.2f))) +
+                            (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
+                    }
                 }
             }
         }
     }
+
+    // 포물선 만들기
 
     public void PopUpDraw()
     {
