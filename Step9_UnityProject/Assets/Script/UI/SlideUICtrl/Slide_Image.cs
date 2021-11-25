@@ -14,7 +14,8 @@ public class Slide_Image : MonoBehaviour
 
     [SerializeField] private GameObject[] Buttons;
     private bool ButtonsAni;
-    private float SinValue;
+    private bool SinAni;
+    private float tmp;
 
     private void Awake()
     {
@@ -40,6 +41,8 @@ public class Slide_Image : MonoBehaviour
         PivotPoint = Pivots[PivotIndex ? 1 : 0].x;
 
         ButtonsAni = false;
+        SinAni = false;
+        tmp = 0;
 
         for (int i = 0; i < Buttons.Length; i++)
         {
@@ -60,33 +63,40 @@ public class Slide_Image : MonoBehaviour
                 {
                     Rect.pivot = (Vector2.left * PivotPoint) + (Vector2.up * Rect.pivot.y);
                     ButtonsAni = true;
-                    SinValue = 0;
                 }
             }
             
             if (ButtonsAni)
             {
+                float u = Time.time;
+                u = (1 - u) * 0 + u * 1;
+                u = EaseU(u);
                 for (int i = 0; i < Buttons.Length; i++)
                 {
+                    Buttons[i].GetComponent<RectTransform>().pivot = (1 - u) * Buttons[i].GetComponent<RectTransform>().pivot
+                        + u * ((Vector2.right * 0.5f) +
+                                (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y));
+
                     //Buttons[i].GetComponent<RectTransform>().pivot += Vector2.left * Speed * 3.0f * Time.deltaTime;
-                    Buttons[i].GetComponent<RectTransform>().pivot = Vector2.Lerp(Buttons[i].GetComponent<RectTransform>().pivot, (Vector2.right * 0.5f) +
-                            (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y), 0.2f * Mathf.PI * Mathf.Sin(SinValue));
 
-                    if (0.5f >= Buttons[i].GetComponent<RectTransform>().pivot.x)
-                    {
-                        Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * 0.5f) +
-                            (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
+                    //if (0.2f >= Buttons[i].GetComponent<RectTransform>().pivot.x)
+                    //{
+                    //    Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * 0.5f) +
+                    //            (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
 
-                        if (i == Buttons.Length - 1)
-                        {
-                            ButtonsAni = false;
-                        }
-                    }
+                    //    if (i == Buttons.Length - 1)
+                    //    {
+                    //        SinAni = true;
+                    //        ButtonsAni = false;
+                    //    }
+                    //}
                 }
             }
         }
         else
         {
+            ButtonsAni = false;
+            SinAni = false;
             if (PivotPoint > Rect.pivot.x) // 목표가 1이고 피벗이 0일때
             {
                 Rect.pivot += Vector2.right * Speed * Time.deltaTime;
@@ -105,8 +115,13 @@ public class Slide_Image : MonoBehaviour
         }
     }
 
-    // 포물선 만들기
+    private float EaseU(float u)
+    {
+        float u2 = u;
+        u2 = u + 2.0f * Mathf.Sin(2 * Mathf.PI * u);
 
+        return u2;
+    }
     public void PopUpDraw()
     {
         PivotIndex = !PivotIndex;
