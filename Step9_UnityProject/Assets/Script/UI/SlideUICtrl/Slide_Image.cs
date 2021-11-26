@@ -13,9 +13,12 @@ public class Slide_Image : MonoBehaviour
     [SerializeField] private float PivotPoint;
 
     [SerializeField] private GameObject[] Buttons;
+    private int ButtonIndex = 0;
     private bool ButtonsAni;
-    private bool SinAni;
-    private float tmp;
+    private bool NextButton;
+    private float ButtonAniStartTime;
+    private Vector2 ButtonStartPos;
+    private Vector2 ButtonEndPos;
 
     private void Awake()
     {
@@ -41,14 +44,16 @@ public class Slide_Image : MonoBehaviour
         PivotPoint = Pivots[PivotIndex ? 1 : 0].x;
 
         ButtonsAni = false;
-        SinAni = false;
-        tmp = 0;
+        NextButton = false;
 
         for (int i = 0; i < Buttons.Length; i++)
         {
-            Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * (1.8f + (i * 1.2f))) +
+            Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * 2.0f) +
                 (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
         }
+
+        ButtonStartPos = new Vector2(4.0f, 0.5f);
+        ButtonEndPos = new Vector2(0.5f, 0.5f);
     }
 
     private void FixedUpdate()
@@ -62,41 +67,34 @@ public class Slide_Image : MonoBehaviour
                 if (PivotPoint >= Rect.pivot.x)
                 {
                     Rect.pivot = (Vector2.left * PivotPoint) + (Vector2.up * Rect.pivot.y);
+
                     ButtonsAni = true;
+                    ButtonAniStartTime = Time.time;
                 }
             }
             
             if (ButtonsAni)
             {
-                float u = Time.time;
-                u = (1 - u) * 0 + u * 1;
-                u = EaseU(u);
-                for (int i = 0; i < Buttons.Length; i++)
+                
+                float u = (Time.time - ButtonAniStartTime) / 0.35f;
+                if (u > 1)
                 {
-                    Buttons[i].GetComponent<RectTransform>().pivot = (1 - u) * Buttons[i].GetComponent<RectTransform>().pivot
-                        + u * ((Vector2.right * 0.5f) +
-                                (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y));
-
-                    //Buttons[i].GetComponent<RectTransform>().pivot += Vector2.left * Speed * 3.0f * Time.deltaTime;
-
-                    //if (0.2f >= Buttons[i].GetComponent<RectTransform>().pivot.x)
-                    //{
-                    //    Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * 0.5f) +
-                    //            (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
-
-                    //    if (i == Buttons.Length - 1)
-                    //    {
-                    //        SinAni = true;
-                    //        ButtonsAni = false;
-                    //    }
-                    //}
+                    u = 1;
+                    ButtonsAni = false;
+                }
+                
+                u = EaseU(u);
+                
+                for(int i = 0; i < Buttons.Length; i++)
+                {
+                    Buttons[i].GetComponent<RectTransform>().pivot = (1 - u) * (ButtonStartPos + (Vector2.left * 0.5f * (4 - i))) + 
+                        u * ButtonEndPos;
                 }
             }
         }
         else
         {
             ButtonsAni = false;
-            SinAni = false;
             if (PivotPoint > Rect.pivot.x) // 목표가 1이고 피벗이 0일때
             {
                 Rect.pivot += Vector2.right * Speed * Time.deltaTime;
@@ -107,7 +105,7 @@ public class Slide_Image : MonoBehaviour
 
                     for (int i = 0; i < Buttons.Length; i++)
                     {
-                        Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * (1.8f + (i * 1.2f))) +
+                        Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * 2.0f) +
                             (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
                     }
                 }
@@ -118,7 +116,7 @@ public class Slide_Image : MonoBehaviour
     private float EaseU(float u)
     {
         float u2 = u;
-        u2 = u + 2.0f * Mathf.Sin(2 * Mathf.PI * u);
+        u2 = u - 0.2f * Mathf.Sin(2 * Mathf.PI * u);
 
         return u2;
     }
