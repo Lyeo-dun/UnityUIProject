@@ -4,49 +4,51 @@ using UnityEngine;
 
 public class TestLerp : MonoBehaviour
 {
-    [SerializeField] private Vector3 StartPoint;
-    [SerializeField] private Vector3 TargetPoint;
+    [SerializeField] private Vector2 StartPoint;
+    [SerializeField] private Vector2 TargetPoint;
 
     [SerializeField] private float StartTime;
 
     [SerializeField] private bool isMove;
-    [SerializeField] private bool isCheck;
 
     void Start()
     {
         isMove = false;
-        isCheck = false;
     }
 
     void Update()
     {
-        if(!isCheck)
-        {
-            StartTime = Time.time;
-            isMove = true;
-
-            StartPoint = this.transform.position;
-
-            isCheck = true;
-        }
-
         if(isMove)
         {
-            float u = Time.time - StartTime;
+            float u = (Time.time - StartTime) / 0.2f;
             if(u > 1)
             {
                 u = 1;
                 isMove = false;
             }
 
-            Debug.Log(u);
-
             u = EaseU(u);
 
-            transform.position = (1 - u) * StartPoint + u * TargetPoint;
+            GetComponent<RectTransform>().pivot = (1 - u) * StartPoint + u * TargetPoint;
         }
     }
+    public void SettingPoint(Vector2 start, Vector2 end)
+    {
+        StartPoint = start;
+        TargetPoint = end;
+    }
 
+    public void ButtonStartPointSetting()
+    {
+        GetComponent<RectTransform>().pivot = StartPoint;
+    }
+    public void ButtonMoveSetting()
+    {
+        StartTime = Time.time;
+        isMove = true;
+
+        ButtonStartPointSetting();
+    }
     private float EaseU(float u)
     {
         float u2 = u;

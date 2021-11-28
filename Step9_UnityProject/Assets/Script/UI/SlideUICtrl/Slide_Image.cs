@@ -13,13 +13,7 @@ public class Slide_Image : MonoBehaviour
     [SerializeField] private float PivotPoint;
 
     [SerializeField] private GameObject[] Buttons;
-    private int ButtonIndex = 0;
     private bool ButtonsAni;
-    private bool NextButton;
-    private float ButtonAniStartTime;
-    private Vector2 ButtonStartPos;
-    private Vector2 ButtonEndPos;
-
     private void Awake()
     {
         Rect = GetComponent<RectTransform>();
@@ -44,16 +38,18 @@ public class Slide_Image : MonoBehaviour
         PivotPoint = Pivots[PivotIndex ? 1 : 0].x;
 
         ButtonsAni = false;
-        NextButton = false;
 
+        Vector2 ButtonStartPos = new Vector2(3.5f, 0.5f);
+        Vector2 ButtonEndPos = new Vector2(0.5f, 0.5f);
+        
         for (int i = 0; i < Buttons.Length; i++)
         {
-            Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * 2.0f) +
-                (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
-        }
+            if (Buttons[i].GetComponent<TestLerp>() == null)
+                Buttons[i].AddComponent<TestLerp>();
 
-        ButtonStartPos = new Vector2(4.0f, 0.5f);
-        ButtonEndPos = new Vector2(0.5f, 0.5f);
+            Buttons[i].GetComponent<TestLerp>().SettingPoint(ButtonStartPos, ButtonEndPos);
+            Buttons[i].GetComponent<TestLerp>().ButtonStartPointSetting();
+        }
     }
 
     private void FixedUpdate()
@@ -67,34 +63,18 @@ public class Slide_Image : MonoBehaviour
                 if (PivotPoint >= Rect.pivot.x)
                 {
                     Rect.pivot = (Vector2.left * PivotPoint) + (Vector2.up * Rect.pivot.y);
-
                     ButtonsAni = true;
-                    ButtonAniStartTime = Time.time;
                 }
             }
             
             if (ButtonsAni)
             {
-                
-                float u = (Time.time - ButtonAniStartTime) / 0.35f;
-                if (u > 1)
-                {
-                    u = 1;
-                    ButtonsAni = false;
-                }
-                
-                u = EaseU(u);
-                
-                for(int i = 0; i < Buttons.Length; i++)
-                {
-                    Buttons[i].GetComponent<RectTransform>().pivot = (1 - u) * (ButtonStartPos + (Vector2.left * 0.5f * (4 - i))) + 
-                        u * ButtonEndPos;
-                }
+                StartCoroutine("ButtonAni");
+                ButtonsAni = false;
             }
         }
         else
         {
-            ButtonsAni = false;
             if (PivotPoint > Rect.pivot.x) // 목표가 1이고 피벗이 0일때
             {
                 Rect.pivot += Vector2.right * Speed * Time.deltaTime;
@@ -105,20 +85,28 @@ public class Slide_Image : MonoBehaviour
 
                     for (int i = 0; i < Buttons.Length; i++)
                     {
-                        Buttons[i].GetComponent<RectTransform>().pivot = (Vector2.right * 2.0f) +
-                            (Vector2.up * Buttons[i].GetComponent<RectTransform>().pivot.y);
+                        Buttons[i].GetComponent<TestLerp>().ButtonStartPointSetting();
                     }
                 }
             }
         }
     }
-
     private float EaseU(float u)
     {
         float u2 = u;
         u2 = u - 0.2f * Mathf.Sin(2 * Mathf.PI * u);
 
         return u2;
+    }
+
+    private IEnumerator ButtonAni()
+    {
+        for(int i = 0; i < Buttons.Length; i++)
+        {
+            yield return new WaitForSeconds(0.02f);
+
+            Buttons[i].GetComponent<TestLerp>().ButtonMoveSetting();
+        }
     }
     public void PopUpDraw()
     {

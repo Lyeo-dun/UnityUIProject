@@ -35,7 +35,7 @@ public class ScrollUICtrl : MonoBehaviour
         ScrollViewUIRect.anchoredPosition = new Vector2(0.0f, 0.0f);
 
         isOpen = false;
-        Speed = 800.0f;
+        Speed = 2400.0f;
     }
 
     public void ClickButton()
@@ -87,6 +87,8 @@ public class ScrollUICtrl : MonoBehaviour
 
                 if(ScrollViewUIRect.anchoredPosition.y >= 0)
                 {
+                    ScrollViewUIRect.anchoredPosition = Vector2.right * 0;
+
                     for (int i = 0; i < ScrollViewContents.Length; i++)
                     {
                         ScrollViewContents[i].anchoredPosition = Vector2.left * 120 + (Vector2.down * (30.0f * i));
