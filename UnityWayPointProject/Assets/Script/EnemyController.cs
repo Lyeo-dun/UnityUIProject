@@ -72,7 +72,7 @@ public class EnemyController : MonoBehaviour
     // ** 충돌 했다면 
     private void OnTriggerEnter(Collider other)
     {
-        // ** 출돌한 목표지점의 이름을 확인한다. 맞다면 다음 노드를 가르킨다.
+        // ** 충돌한 목표지점의 이름을 확인한다. 맞다면 다음 노드를 가르킨다.
         if (TargetNode && other.transform.name == ("Node " + TargetNode.Index))
             TargetNode = TargetNode.NextNode;
     }

@@ -41,9 +41,8 @@ public class WayPointEditor : EditorWindow
             // ** GUILayout.MaxWidth(); GUILayout.MaxHeight();
 
             // ** 생성된 윈도우 창의 레이아웃을 위 옵션으로 변경할 수 있다.
-            // ** 옵션 추가는 마응대로할 수 있다.
+            // ** 옵션 추가는 마음대로할 수 있다.
             EditorGUILayout.BeginVertical();
-
 
             // ** 버튼을 생성한다. 그리고 버튼이 눌렸는지 확인다.
             // ** 버튼이 눌렸다면 CreateNode() 함수를 실행한다.
@@ -92,13 +91,13 @@ public class WayPointEditor : EditorWindow
             // ** 만약 ParentNode의 하위에 자식노드의 개수가 2개 이상이라면...
             if (ParentNode.transform.childCount > 1)
             {
-                // ** 이 전 노드를 찾는다. 
+                // ** 이 전 노드를 찾는다.
                 Node PreviousNode = ParentNode.transform.GetChild(ParentNode.transform.childCount - 2).GetComponent<Node>();
 
                 // ** 찾은 이전 노드에 현재 노드를 넣는다.
                 PreviousNode.NextNode = ParentNode.transform.GetChild(ParentNode.transform.childCount - 1).GetComponent<Node>();
 
-                // ** 그리고 현재 노드에 처번째 노드를 넣어 반복될 수 있도록 한다.
+                // ** 그리고 현재 노드에 첫번째 노드를 넣어 반복될 수 있도록 한다.
                 CurrentNode.NextNode = ParentNode.transform.GetChild(0).GetComponent<Node>();
 
                 Distance = Vector3.Distance(PreviousNode.transform.position, CurrentNode.transform.position);

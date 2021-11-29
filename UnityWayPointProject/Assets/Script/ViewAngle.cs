@@ -37,7 +37,7 @@ public class ViewAngle : MonoBehaviour
     public List<Transform> TargetList = new List<Transform>();
     
     [Tooltip("시야각의 라인 개수")]
-    [SerializeField] private int LineAngle = 1;
+    private int LineAngle = 1;
 
     public MeshFilter ViewMeshFilter;
     Mesh ViewMesh;
