@@ -11,12 +11,12 @@ public class PlayerController : MonoBehaviour
         Speed = 10.0f;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         Vector3 Dir = JoyStickManager.Instance.Direction;
         Dir.z = Dir.y;
         Dir.y = 0;
 
-        transform.position += Dir * Speed * Time.deltaTime;
+        transform.position += Dir * JoyStickManager.Instance.Value * Speed * Time.deltaTime;
     }
 }
