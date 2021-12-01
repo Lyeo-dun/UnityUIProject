@@ -21,6 +21,8 @@ public class JoyStickManager : MonoBehaviour
     public Vector3 ShootingDirection = Vector3.zero;
     public float ShootingValue = 0;
 
+    public GameObject Player;
+
     private void Awake()
     {
         if (_instance == null)
@@ -32,5 +34,10 @@ public class JoyStickManager : MonoBehaviour
                 Destroy(this.gameObject);
             }
         }
+    }
+    public void PlayerAimming(bool _value, Vector3 Dir)
+    {
+        if (Player)
+            Player.GetComponent<PlayerController>().SetPlayerAim(_value, Dir);
     }
 }

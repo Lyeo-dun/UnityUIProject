@@ -11,8 +11,12 @@ public class PlayerController : MonoBehaviour
     // ** 플레이어가 쏘고 있는 중인지 판단한다.
     private bool PlayerShooting;
 
+    private Vector3 ShootDir;
+
     private void Start()
     {
+        JoyStickManager.Instance.Player = this.gameObject;
+
         Speed = 10.0f;
         PlayerTargetAimming = false;
         PlayerShooting = false;
@@ -43,8 +47,7 @@ public class PlayerController : MonoBehaviour
 
     private void Skill1()
     {
-
-        Vector3 Dir = JoyStickManager.Instance.ShootingDirection;
+        Vector3 Dir = ShootDir;
         Dir.z = Dir.y;
         Dir.y = 0;
 
@@ -52,12 +55,18 @@ public class PlayerController : MonoBehaviour
         transform.rotation = rot;
 
         PlayerShooting = true;
-        //...
+        Debug.Log("Skill");
 
         StartCoroutine("PlayerShootingFinish", 1.0f);
 
+        PlayerTargetAimming = false;
     }
     
+    public void SetPlayerAim(bool _value, Vector3 _dir)
+    {
+        PlayerTargetAimming = _value;
+        ShootDir = _dir;
+    }
     IEnumerator PlayerShootingFinish(float _time)
     {
         yield return new WaitForSeconds(_time);

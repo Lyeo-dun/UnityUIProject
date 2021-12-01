@@ -51,6 +51,12 @@ public class JoyStickCircleCtrl : MonoBehaviour, IBeginDragHandler, IDragHandler
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (transform.parent.GetComponent<JoyStickCtrl>().Mode == JoyStickMode.Rotate)
+        {
+            // ** 조준 모드 조이스틱이라면 조준상태를 참으로 변경하고 조이스틱을 놓았던 마지막 방향을 리턴한다.
+            JoyStickManager.Instance.PlayerAimming(true, transform.parent.GetComponent<JoyStickCtrl>().Direction);
+        }
+
         // ** 컨트롤러를 놓는 순간 중앙 위치와 값을 움직이기 전 원 상태로 초기화한다.
         transform.position = (Vector2)transform.parent.position;
         transform.parent.GetComponent<JoyStickCtrl>().value = 0;
@@ -59,6 +65,6 @@ public class JoyStickCircleCtrl : MonoBehaviour, IBeginDragHandler, IDragHandler
         transform.parent.GetComponent<JoyStickCtrl>().Direction = Vector2.zero;
 
         // ** 색을 초기상태로 변경한다.
-        GetComponent<Image>().color = StandardColor; 
+        GetComponent<Image>().color = StandardColor;
     }
 }

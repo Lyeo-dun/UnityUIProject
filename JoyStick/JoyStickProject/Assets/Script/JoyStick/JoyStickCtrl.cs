@@ -13,7 +13,7 @@ public class JoyStickCtrl : MonoBehaviour
     public float value;
     public Vector3 Direction;
 
-    [SerializeField] private JoyStickMode Mode;
+    public JoyStickMode Mode;
 
     private void Awake()
     {
@@ -30,6 +30,11 @@ public class JoyStickCtrl : MonoBehaviour
         {
             JoyStickManager.Instance.MoveDirection = Direction;
             JoyStickManager.Instance.MoveValue = value;
+        }
+
+        if(Mode == JoyStickMode.Rotate)
+        {
+            JoyStickManager.Instance.ShootingDirection = Direction;
         }
     }
 }
