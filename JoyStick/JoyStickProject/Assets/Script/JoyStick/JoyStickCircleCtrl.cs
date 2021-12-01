@@ -39,6 +39,7 @@ public class JoyStickCircleCtrl : MonoBehaviour, IBeginDragHandler, IDragHandler
         {
             CircleDistance = MaxDistance; // ** 최대 거리로 맞춰준다
         }
+
         // ** 조이스틱 벨류값(0 ~ 1의 값)을 세팅
         transform.parent.GetComponent<JoyStickCtrl>().value = CircleDistance / MaxDistance;
         transform.parent.GetComponent<JoyStickCtrl>().Direction = vecNomalize;

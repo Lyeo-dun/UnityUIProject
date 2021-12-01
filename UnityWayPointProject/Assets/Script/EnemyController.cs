@@ -22,6 +22,9 @@ public class EnemyController : MonoBehaviour
     // ** 움직일지 확인
     private bool Moving = false;
 
+    // ** 돌아서 갈지 확인
+    private bool isTurn = false;
+
     private void Awake()
     {
         // ** 노드의 부모를 받아온다.

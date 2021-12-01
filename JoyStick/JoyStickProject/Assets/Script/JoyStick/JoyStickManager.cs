@@ -15,8 +15,11 @@ public class JoyStickManager : MonoBehaviour
     private JoyStickManager()
     { }
 
-    public Vector3 Direction = Vector3.zero;
-    public float Value = 0;
+    public Vector3 MoveDirection = Vector3.zero;
+    public float MoveValue = 0;
+
+    public Vector3 ShootingDirection = Vector3.zero;
+    public float ShootingValue = 0;
 
     private void Awake()
     {
