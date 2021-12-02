@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 ShootDir;
 
+    private GameObject PlayerBulletPrefab;
+
     private void Start()
     {
         JoyStickManager.Instance.Player = this.gameObject;
@@ -20,38 +22,46 @@ public class PlayerController : MonoBehaviour
         Speed = 10.0f;
         PlayerTargetAimming = false;
         PlayerShooting = false;
+
+        PlayerBulletPrefab = Resources.Load("Prefab/Bullet") as GameObject;
+        for (int i = 0; i < 5; i++)
+        {
+            GameObject Bullet = Instantiate<GameObject>(PlayerBulletPrefab, null);
+            ObjectPool.Instance.CreateObject(ObjectKey.Bullet, Bullet);
+        }
     }
 
     private void FixedUpdate()
     {
         Vector3 Dir = JoyStickManager.Instance.MoveDirection;
-        Dir.z = Dir.y;
-        Dir.y = 0;
+        float RotationValue = Mathf.Atan2(Dir.x, Dir.y) * Mathf.Rad2Deg;
 
         if(!PlayerTargetAimming && !PlayerShooting)
         {
             if(Dir.x != 0 || Dir.y != 0)
             {
-                Quaternion rot = Quaternion.LookRotation(Dir);
+                Quaternion rot = Quaternion.Euler(Vector3.up * RotationValue);
                 transform.rotation = rot;
             }
         }
         
         if(PlayerTargetAimming)
         {
-            Skill1();
+            ShootBullet();
         }
-        
-        transform.position += Dir * JoyStickManager.Instance.MoveValue * Speed * Time.deltaTime;
-    }
 
-    private void Skill1()
-    {
-        Vector3 Dir = ShootDir;
         Dir.z = Dir.y;
         Dir.y = 0;
 
-        Quaternion rot = Quaternion.LookRotation(Dir);
+        transform.position += Dir * JoyStickManager.Instance.MoveValue * Speed * Time.deltaTime;
+    }
+
+    private void ShootBullet()
+    {
+        Vector3 Dir = ShootDir;
+        float RotationValue = Mathf.Atan2(Dir.x, Dir.y) * Mathf.Rad2Deg;
+
+        Quaternion rot = Quaternion.Euler(Vector3.up * RotationValue);
         transform.rotation = rot;
 
         PlayerShooting = true;
@@ -67,6 +77,25 @@ public class PlayerController : MonoBehaviour
         PlayerTargetAimming = _value;
         ShootDir = _dir;
     }
+
+    private void SettingBullet()
+    {
+        if(ObjectPool.Instance.GetDisable.ContainsKey(ObjectKey.Bullet) && 
+            ObjectPool.Instance.GetDisable[ObjectKey.Bullet].Count > 0)
+        {
+            GameObject Bullet = ObjectPool.Instance.GetDisable[ObjectKey.Bullet][0];
+            ObjectPool.Instance.GetDisable[ObjectKey.Bullet].RemoveAt(0);
+
+            Bullet.transform.parent = GameObject.Find("Objectpool/EnableList").transform;
+            
+            Debug.Log("총알 발사");
+        }
+        else
+        {
+            Debug.Log("총알 충전 후 발사");
+        }
+    }
+
     IEnumerator PlayerShootingFinish(float _time)
     {
         yield return new WaitForSeconds(_time);
