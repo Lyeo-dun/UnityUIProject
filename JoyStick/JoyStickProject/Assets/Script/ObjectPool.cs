@@ -42,21 +42,46 @@ public class ObjectPool
 
     public void CreateObject(ObjectKey _ObjectKeyValue, GameObject _obj)
     {
-        _obj.AddComponent<BulletControler>();
+        switch(_ObjectKeyValue)
+        {
+            case ObjectKey.Bullet:
+                if (_obj.GetComponent<BulletControler>() == null)
+                    _obj.AddComponent<BulletControler>();
+                break;
+        }
+
         _obj.transform.SetParent(GameObject.Find("Objectpool/DisableList").transform);
         _obj.GetComponent<Collider>().isTrigger = true;
         _obj.gameObject.SetActive(false);
 
-        if (DisableList.ContainsKey(_ObjectKeyValue))
+        AddObject(false, _ObjectKeyValue, _obj);
+    }
+
+    public void AddObject(bool _Enable, ObjectKey _ObjectKeyValue, GameObject _obj)
+    {
+        if(_Enable)
         {
-            DisableList[_ObjectKeyValue].Add(_obj);
+            if (EnableList.ContainsKey(_ObjectKeyValue))
+            {
+                EnableList[_ObjectKeyValue].Add(_obj);
+            }
+            else
+            {
+                EnableList.Add(_ObjectKeyValue, new List<GameObject>());
+                EnableList[_ObjectKeyValue].Add(_obj);
+            }
         }
         else
         {
-            DisableList.Add(_ObjectKeyValue, new List<GameObject>());
-            DisableList[_ObjectKeyValue].Add(_obj);
+            if (DisableList.ContainsKey(_ObjectKeyValue))
+            {
+                DisableList[_ObjectKeyValue].Add(_obj);
+            }
+            else
+            {
+                DisableList.Add(_ObjectKeyValue, new List<GameObject>());
+                DisableList[_ObjectKeyValue].Add(_obj);
+            }
         }
-
-        Debug.Log("test");
     }
 }

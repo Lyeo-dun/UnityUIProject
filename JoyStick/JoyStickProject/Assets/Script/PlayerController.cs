@@ -23,12 +23,7 @@ public class PlayerController : MonoBehaviour
         PlayerTargetAimming = false;
         PlayerShooting = false;
 
-        PlayerBulletPrefab = Resources.Load("Prefab/Bullet") as GameObject;
-        for (int i = 0; i < 5; i++)
-        {
-            GameObject Bullet = Instantiate<GameObject>(PlayerBulletPrefab, null);
-            ObjectPool.Instance.CreateObject(ObjectKey.Bullet, Bullet);
-        }
+        CreateBullet();
     }
 
     private void FixedUpdate()
@@ -65,11 +60,16 @@ public class PlayerController : MonoBehaviour
         transform.rotation = rot;
 
         PlayerShooting = true;
-        Debug.Log("Skill");
+
+        GameObject Bullet = SettingBullet();
+        if(Bullet)
+        {
+            Bullet.transform.rotation = transform.rotation;
+
+            Bullet.SetActive(true);
+        }
 
         StartCoroutine("PlayerShootingFinish", 1.0f);
-
-        PlayerTargetAimming = false;
     }
     
     public void SetPlayerAim(bool _value, Vector3 _dir)
@@ -78,26 +78,50 @@ public class PlayerController : MonoBehaviour
         ShootDir = _dir;
     }
 
-    private void SettingBullet()
+    private GameObject SettingBullet()
     {
+        GameObject Bullet = null;
+
+        // ** 사용하지 않는 총알이 있다면 사용하는 총알 리스트로 옮기고 총알을 반환한다
         if(ObjectPool.Instance.GetDisable.ContainsKey(ObjectKey.Bullet) && 
             ObjectPool.Instance.GetDisable[ObjectKey.Bullet].Count > 0)
         {
-            GameObject Bullet = ObjectPool.Instance.GetDisable[ObjectKey.Bullet][0];
-            ObjectPool.Instance.GetDisable[ObjectKey.Bullet].RemoveAt(0);
-
-            Bullet.transform.parent = GameObject.Find("Objectpool/EnableList").transform;
-            
-            Debug.Log("총알 발사");
+            Bullet = AddEnableBullet(); 
+            return Bullet;
         }
-        else
+
+        //// ** 사용하지 않는 총알이 없다면 새로운 총알을 만들고 하나를 사용하는 총알 리스트로 옮긴다
+        CreateBullet();
+        Bullet = AddEnableBullet();
+
+        return Bullet;
+    }
+
+    private GameObject AddEnableBullet()
+    {
+        GameObject _Bullet = ObjectPool.Instance.GetDisable[ObjectKey.Bullet][0];
+        ObjectPool.Instance.GetDisable[ObjectKey.Bullet].RemoveAt(0);
+
+        _Bullet.transform.parent = GameObject.Find("Objectpool/EnableList").transform;
+        _Bullet.transform.position = transform.position + Vector3.up * 1.0f;
+
+        ObjectPool.Instance.AddObject(true, ObjectKey.Bullet, _Bullet);
+
+        return _Bullet;
+    }
+    private void CreateBullet()
+    {
+        PlayerBulletPrefab = Resources.Load("Prefab/Bullet") as GameObject;
+        for (int i = 0; i < 5; i++)
         {
-            Debug.Log("총알 충전 후 발사");
+            GameObject Bullet = Instantiate<GameObject>(PlayerBulletPrefab, null);
+            ObjectPool.Instance.CreateObject(ObjectKey.Bullet, Bullet);
         }
     }
 
     IEnumerator PlayerShootingFinish(float _time)
     {
+        PlayerTargetAimming = false;
         yield return new WaitForSeconds(_time);
         PlayerShooting = false;
     }
